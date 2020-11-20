@@ -1,0 +1,70 @@
+---
+title: "KMeans"
+output: html_notebook
+---
+
+```{r}
+library("readxl")
+library(predict3d)
+```
+
+```{r}
+WS <- read.csv("Wholesale_customers_data.csv")
+summary(WS)
+```
+
+```{r}
+WSdata.new <- WS[, 1:8]
+WSdata.class <- WS[,"Region"]
+WSdata.class <- WS[, "Channel"]
+set.seed(1234)
+result <- kmeans(WSdata.new, 8)
+```
+
+```{r}
+par(mfrow=c(3,3), mar=c(2,2,1,1))
+plot(WSdata.new[, c(3,4)], col=result$cluster)
+plot(WSdata.new[, c(3,4)], col=WSdata.class)
+plot(WSdata.new[, c(5,6)], col=result$cluster)
+plot(WSdata.new[, c(5,6)], col=WSdata.class)
+plot(WSdata.new[, c(7,8)], col=result$cluster)
+plot(WSdata.new[, c(7,8)], col=WSdata.class)
+```
+
+```{r}
+result$tot.withinss
+```
+
+```{r}
+attributes(result)$names
+```
+
+```{r}
+WSdata.new$cluster <- factor(result$cluster)
+centers <- as.data.frame(result$centers)
+library(ggplot2)
+ggplot() + 
+  geom_point(data=WSdata.new, aes(x=Fresh, y=Milk,color=cluster))  +
+  geom_point(data=centers, aes(x=Fresh, y=Milk, color="Center"), 
+             size=52, alpha=.3, show.legend = FALSE)
+```
+
+```{r}
+WSdata.new$cluster <- factor(result$cluster)
+centers <- as.data.frame(result$centers)
+library(ggplot2)
+ggplot() + 
+  geom_point(data=WSdata.new, aes(x=Grocery, y=Frozen,color=cluster))  +
+  geom_point(data=centers, aes(x=Grocery, y=Frozen, color="Center"), 
+             size=52, alpha=.3, show.legend = FALSE)
+```
+
+```{r}
+WSdata.new$cluster <- factor(result$cluster)
+centers <- as.data.frame(result$centers)
+library(ggplot2)
+ggplot() + 
+  geom_point(data=WSdata.new, aes(x=Detergents_Paper, y=Delicassen,color=cluster))  +
+  geom_point(data=centers, aes(x=Detergents_Paper, y=Delicassen, color="Center"), 
+             size=52, alpha=.3, show.legend = FALSE)
+```
